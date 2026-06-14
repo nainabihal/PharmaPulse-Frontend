@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-fadeInUp: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-shimmer: shimmer 2s infinite linear;
+  --animate-pulseSlow: pulseSlow 6s ease-in-out infinite;
+  --animate-float: float 14s ease-in-out infinite;
+  --animate-breathe: breathe 5s ease-in-out infinite;
+  --animate-pulseGlow: pulseGlow 4s ease-in-out infinite;
+  --animate-scan: scan 3.5s linear infinite;
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+* {
+    font-family: "Arimo", sans-serif;
+    font-optical-sizing: auto;
+    /* font-weight: 400; */
+    font-style: normal;
+}
+
+:root {
+  /* Header foundation */
+  --pharma-header-bg: oklch(0.18 0.02 245); /* deep cool slate */
+  --pharma-header-glow: oklch(0.72 0.15 200); /* biocyan */
+  --pharma-header-accent: oklch(0.78 0.14 145); /* soft lime */
+
+  /* Text */
+  --pharma-title: oklch(0.96 0.01 260);
+  --pharma-subtitle: oklch(0.78 0.02 260);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-dark {
+  background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+
+@keyframes pulseSlow {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulseSlow {
+  animation: pulseSlow 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%   { transform: translateY(0) translateX(0); }
+  50%  { transform: translateY(-40px) translateX(20px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+.animate-float {
+  animation: float 14s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+  50% {
+    transform: scale(1.01);
+    box-shadow: 0 0 40px rgba(34, 211, 238, 0.15);
+  }
+}
+
+.animate-breathe {
+  animation: breathe 5s ease-in-out infinite;
+}
+
+.ecg-line {
+  fill: none;
+  stroke: rgba(34, 211, 238, 0.6); /* cyan pharma tone */
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+
+  animation: ecg-draw 4s linear infinite;
+}
+
+@keyframes ecg-draw {
+  0% {
+    stroke-dashoffset: 1200;
+    opacity: 0.4;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.4;
+  }
+}
+
+
+@keyframes headerGlow {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 0.7; }
+  100% { opacity: 0.4; }
+}
+
+.animate-headerGlow {
+  animation: headerGlow 8s ease-in-out infinite;
+}
+@keyframes pulseGlow {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.15);
+  }
+}
+
+.animate-pulseGlow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.35;
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-scan {
+  animation: scan 3.5s linear infinite;
+}

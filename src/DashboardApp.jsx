@@ -4,22 +4,34 @@ import NewsSection from "./components/NewSection";
 import SearchBar from "./components/SearchBar";
 import Sidebar from "./components/Sidebar";
 import AnalyticsPage from "./components/AnalyticsPage";
+import { X, Globe, Save } from "lucide-react";
 
 export default function DashboardApp () {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [view, setView] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Dynamic backend configuration states
+  const [backendUrl, setBackendUrl] = useState(() => {
+    return localStorage.getItem("pharma_pulse_backend_url") || import.meta.env.VITE_API_URL || "http://localhost:8000";
+  });
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [tempBackendUrl, setTempBackendUrl] = useState(backendUrl);
+
   // Dynamic backend state
   const [intelligenceData, setIntelligenceData] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
 
-  // Fetch initial market news and past runs on mount
+  // Fetch initial market news and past runs on mount / backendUrl change
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const res = await fetch("http://localhost:8000/intelligence");
+        const res = await fetch(`${backendUrl}/intelligence`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true"
+          }
+        });
         if (res.ok) {
           const data = await res.json();
           if (data && !data.message) {
@@ -31,7 +43,7 @@ export default function DashboardApp () {
       }
     };
     fetchInitialData();
-  }, []);
+  }, [backendUrl]);
 
   const handleSearch = async (query) => {
     const cleanQuery = query.toLowerCase().trim();
@@ -42,8 +54,13 @@ export default function DashboardApp () {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/run/${encodeURIComponent(cleanQuery)}`,
-        { method: "POST" }
+        `${backendUrl}/run/${encodeURIComponent(cleanQuery)}`,
+        { 
+          method: "POST",
+          headers: {
+            "ngrok-skip-browser-warning": "true"
+          }
+        }
       );
       if (!res.ok) {
         throw new Error(`Server returned error: ${res.status}`);
@@ -71,7 +88,13 @@ export default function DashboardApp () {
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} setView={setView} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header onMenuToggle={() => setSidebarOpen(true)} />
+        <Header 
+          onMenuToggle={() => setSidebarOpen(true)} 
+          onSettingsOpen={() => {
+            setTempBackendUrl(backendUrl);
+            setIsSettingsOpen(true);
+          }}
+        />
 
         <main className="flex-1 overflow-auto">
           <div className={`h-full ${view === 'dashboard' ? 'px-0' : 'p-8'}`} >
@@ -216,6 +239,92 @@ export default function DashboardApp () {
           </div>
         </main>
       </div>
+
+      {/* Settings Modal */}
+      {isSettingsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-fade-in animate-fade-in-duration">
+          <div className="relative bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform scale-100 transition-all duration-300">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-cyan-50 text-cyan-600 rounded-xl">
+                  <Globe size={18} />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">Connection Settings</h3>
+              </div>
+              <button 
+                onClick={() => setIsSettingsOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer font-semibold"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                  Backend API URL
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={tempBackendUrl}
+                    onChange={(e) => setTempBackendUrl(e.target.value)}
+                    placeholder="http://localhost:8000"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 focus:border-cyan-500 focus:bg-white rounded-2xl text-slate-700 text-sm outline-none transition-all pr-10 font-mono"
+                  />
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                    <Globe size={16} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Helper guide */}
+              <div className="p-4 bg-cyan-50/40 border border-cyan-100/50 rounded-2xl space-y-2 text-xs text-cyan-800 leading-relaxed">
+                <span className="font-bold block text-cyan-900">How to use with ngrok / mobile:</span>
+                <ol className="list-decimal list-inside space-y-1 text-cyan-700">
+                  <li>Run your backend server: <code className="bg-cyan-100/70 px-1 rounded font-mono">fastapi dev api.py</code></li>
+                  <li>Expose it: <code className="bg-cyan-100/70 px-1 rounded font-mono">ngrok http 8000</code></li>
+                  <li>Copy the public <code className="font-semibold">https://...ngrok-free.app</code> URL</li>
+                  <li>Paste it in the box above and save!</li>
+                </ol>
+                <p className="mt-2 text-[10px] text-cyan-600">
+                  * All requests are automatically configured to bypass the ngrok warning screen.
+                </p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center justify-end gap-3 px-6 py-4 bg-slate-50/50 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setIsSettingsOpen(false)}
+                className="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  let formattedUrl = tempBackendUrl.trim();
+                  // Remove trailing slash if present
+                  if (formattedUrl.endsWith("/")) {
+                    formattedUrl = formattedUrl.slice(0, -1);
+                  }
+                  localStorage.setItem("pharma_pulse_backend_url", formattedUrl);
+                  setBackendUrl(formattedUrl);
+                  setIsSettingsOpen(false);
+                }}
+                className="flex items-center gap-1.5 px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 active:scale-95 shadow-md shadow-cyan-500/10 rounded-xl transition-all cursor-pointer"
+              >
+                <Save size={16} />
+                Save Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

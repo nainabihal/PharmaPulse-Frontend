@@ -6,7 +6,7 @@ import Sidebar from "./components/Sidebar";
 import AnalyticsPage from "./components/AnalyticsPage";
 import { X, Globe, Save } from "lucide-react";
 
-export default function DashboardApp () {
+export default function DashboardApp() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [view, setView] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,7 +55,7 @@ export default function DashboardApp () {
     try {
       const res = await fetch(
         `${backendUrl}/run/${encodeURIComponent(cleanQuery)}`,
-        { 
+        {
           method: "POST",
           headers: {
             "ngrok-skip-browser-warning": "true"
@@ -88,8 +88,8 @@ export default function DashboardApp () {
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} setView={setView} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header 
-          onMenuToggle={() => setSidebarOpen(true)} 
+        <Header
+          onMenuToggle={() => setSidebarOpen(true)}
           onSettingsOpen={() => {
             setTempBackendUrl(backendUrl);
             setIsSettingsOpen(true);
@@ -98,10 +98,10 @@ export default function DashboardApp () {
 
         <main className="flex-1 overflow-auto">
           <div className={`h-full ${view === 'dashboard' ? 'px-0' : 'p-8'}`} >
-            
+
             {view === 'dashboard' && (
-                <div className="h-full flex">
-                  <div className="absolute inset-0 -z-20 overflow-hidden">
+              <div className="h-full flex">
+                <div className="absolute inset-0 -z-20 overflow-hidden">
                   {[...Array(6)].map((_, i) => (
                     <span
                       key={i}
@@ -115,8 +115,8 @@ export default function DashboardApp () {
                   ))}
                 </div>
 
-                  <div className="h-full w-full flex flex-col justify-center gap-10">
-                    <header className="relative w-full bg-background/80 backdrop-blur text-center overflow-hidden">
+                <div className="h-full w-full flex flex-col justify-center gap-10">
+                  <header className="relative w-full bg-background/80 backdrop-blur text-center overflow-hidden">
                     <div className="absolute w-full h-24 overflow-hidden">
                       <svg
                         viewBox="0 0 1000 100"
@@ -145,67 +145,67 @@ export default function DashboardApp () {
                       </svg>
                     </div>
 
-                      <div className="flex flex-col justify-center items-center max-w-7xl mx-auto px-6 py-6 gap-3">
-  <h1 className="
+                    <div className="flex flex-col justify-center items-center max-w-7xl mx-auto px-6 py-6 gap-3">
+                      <h1 className="
     relative flex items-center text-2xl font-extrabold tracking-tight
     rounded-full overflow-hidden
     border border-cyan-400/40
     bg-white/70 backdrop-blur
     shadow-[0_0_40px_rgba(34,211,238,0.15)]
   ">
-    {/* Pharma */}
-    <span className="px-5 py-2 text-slate-800">
-      Pharma
-    </span>
+                        {/* Pharma */}
+                        <span className="px-5 py-2 text-slate-800">
+                          Pharma
+                        </span>
 
-    {/* Pulse */}
-    <span className="
+                        {/* Pulse */}
+                        <span className="
       relative px-5 py-2
       text-white
       bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-400
       animate-pulseGlow
     ">
-      Pulse
+                          Pulse
 
-      {/* ECG flash */}
-      <span className="
+                          {/* ECG flash */}
+                          <span className="
         absolute inset-0
         bg-white/20
         translate-x-[-100%]
         animate-scan
       " />
-    </span>
-  </h1>
+                        </span>
+                      </h1>
 
-  <p className="text-sm text-slate-500 max-w-md text-center">
-    Real-time pharma insights & updates
-  </p>
-</div>
+                      <p className="text-sm text-slate-500 max-w-md text-center">
+                        Real-time pharma insights & updates
+                      </p>
+                    </div>
 
-                      
-                    </header>
-                    
 
-                    <div className="flex items-center justify-center">
-                      <div className="w-full max-w-2xl animate-breathe">
-                        <SearchBar onSearch={handleSearch} loading={searchLoading} />
-                      </div>
+                  </header>
+
+
+                  <div className="flex items-center justify-center">
+                    <div className="w-full max-w-2xl animate-breathe">
+                      <SearchBar onSearch={handleSearch} loading={searchLoading} />
                     </div>
                   </div>
-
-                  <div className="hidden w-64 lg:block lg:flex lg:justify-end">
-                    <NewsSection 
-                      isExpanded={false}
-                      onExpand={handleExpandNews}
-                      marketIntelligence={intelligenceData?.market_intelligence}
-                    />
-                  </div>
                 </div>
+
+                <div className="hidden w-64 lg:block lg:flex lg:justify-end">
+                  <NewsSection
+                    isExpanded={false}
+                    onExpand={handleExpandNews}
+                    marketIntelligence={intelligenceData?.market_intelligence}
+                  />
+                </div>
+              </div>
             )}
 
             {view === 'results' && (
               <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <AnalyticsPage 
+                <AnalyticsPage
                   searchQuery={searchQuery}
                   productIntelligence={intelligenceData?.productIntelligence || []}
                   finalExecutiveProductIntelligenceReport={intelligenceData?.finalExecutiveProductIntelligenceReport || []}
@@ -214,22 +214,22 @@ export default function DashboardApp () {
                 />
                 {!(view === 'results') && (
                   <div
-                  className="col-span-1 lg:hidden"
+                    className="col-span-1 lg:hidden"
                   >
-                    <NewsSection 
+                    <NewsSection
                       isExpanded={false}
                       onExpand={handleExpandNews}
                       marketIntelligence={intelligenceData?.market_intelligence}
                     />
                   </div>
                 )}
-                
+
               </div>
             )}
-            
+
             {view === 'news' && (
               <div className="w-full">
-                <NewsSection 
+                <NewsSection
                   isExpanded={true}
                   onCollapse={handleCollapseNews}
                   marketIntelligence={intelligenceData?.market_intelligence}
@@ -252,7 +252,7 @@ export default function DashboardApp () {
                 </div>
                 <h3 className="text-lg font-bold text-slate-800">Connection Settings</h3>
               </div>
-              <button 
+              <button
                 onClick={() => setIsSettingsOpen(false)}
                 className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer font-semibold"
               >
